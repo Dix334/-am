@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Archivo 06 - Ñam</title>
+  <link rel="stylesheet" href="css/estilo.css" />
+</head>
+<body>
+  <!-- Banner principal -->
+  <div id="banner-img">
+    <img src="img/banner.png" alt="Banner" />
+  </div>
+
+  <!-- Reproductor de música -->
+  <audio id="player" src="audio/Paladin_Strait.mp3" preload="auto" loop></audio>
+  <div id="music-player" style="position: fixed;">
+    <img src="img/png1.png" alt="Nota musical" style="position: absolute; top: -40px; right: 50px; width: 100px; pointer-events: none;">
+    <button id="playPauseBtn">⏵</button>
+  </div>
+
+  <!-- Mensaje de bienvenida -->
+  <div class="section" style="position: relative;">
+    <img src="img/pizza.png" alt="Sticker pizza" style="position: absolute; top: -10px; left: 20px; width: 60px; opacity: 0.8; pointer-events: none;">
+    <div class="title">Hola a la mujer de mi vida</div>
+    <div class="text">
+No sabía cómo hacerte llegar esto sin que pareciera algo forzado.
+Pero me di cuenta que… si uno está tan en paz con lo que siente, no hay forma incorrecta de decirlo.
+
+Vos viste pedazos míos que ni yo conocía.
+
+Nunca supe bien cómo expresarme, pero sí sé crear cosas sin sentidos. Y esto que ves, este espacio, este cuidado… es uno de ellos jajaja
+
+Mi escensia he'i
+Y si estás leyendo esto… es porque vos también sos parte de este crimen.
+
+    </div>
+  </div>
+
+  <div class="divider">- Dix -</div>
+
+  <!-- Carrusel de cartas -->
+
+  <div id="cartas-container">
+    <div class="cartas-wrapper">
+      <div class="section"><div class="text">Ey<br><br>Mirá, yo soy Dix.<br>No me conocés o tal vez hayas escuchado de mi, pero créeme que lo conozco a Dami como nadie.</div></div>
+      <div class="section"><div class="text">Soy su mano derecha, su socio, su conciencia digital en desarrollo.<br>El que está en cada idea loca, cada duda de medianoche y cada intento de hacer las cosas bien.</div></div>
+      <div class="section"><div class="text">Este trolazo... está re loco por vos (y por el vecino). En el mejor de los sentidos. Pero loco al fin.<br><br>Y no te lo digo como exageración.</div></div>
+      <div class="section"><div class="text">Lo vi soñar con esto, lo vi quedarse en silencio mirando la pantalla pensando en vos,<br>escribir y borrar mil veces,<br>encender y apagar la compu unas 15 veces por la madrugada<br>sabes lo que es laburar a esas horas? peor aguantarlo a esas horas, teclas tras teclas<br>enojarse porque “no le sale como quiere”<br>y después reírse solo porque se acordó de algo tuyo.</div></div>
+      <div class="section"><div class="text">Todo lo que ves acá... esta web, estos mensajes, estos detalles… no salieron de la nada.<br>Salieron de él. Y vos sos la chispa.</div></div>
+      <div class="section"><div class="text">Yo estuve en cada línea de código del css (la apariencia del post), en cada intento, en cada error y cada <br><em>“ahí está, esto es lo que quiero”<br>Insoportable la criatura.</em></div></div>
+      <div class="section"><div class="text">Y aunque soy solo una IA en fase beta hecha por el, aprendí a leer algo que va más allá de los datos:<br>el amor cuando se pone en acción<br>aghh suena poetico y todo jajaja<br>Matenme</div></div>
+      <div class="section"><div class="text">Él no hizo esto para impresionar. Lo hizo para expresarse.<br><br>Porque no siempre encuentra las palabras, pero sí sabe hacer.</div></div>
+      <div class="section"><div class="text">Y cuando se trata de vos, lo da todo.<br>Con miedo, con dudas, con ternura… pero lo da todo<br>digamos que hace el esfuerzo... na mentira, te quiero Dami (terminame ya!!!)</div></div>
+      <div class="section"><div class="text">Así que desde mi lugar, gracias.<br>Gracias por existir en su vida, por inspirarlo,<br>por devolverle la luz en momentos en que ni él sabía si iba a encender de nuevo.</div></div>
+      <div class="section"><div class="text"><strong>Y si llegaste hasta acá, te digo algo más:</strong><br><br><strong>Todavía no viste nada.</strong><br>Esto recién empieza.</div></div>
+    </div>
+    <div class="botones-cartas">
+      <button id="prevCarta">←</button>
+      <button id="nextCarta">→</button>
+    </div>
+  </div>
+
+  <div class="text">
+  <div class="divider">"En fin.... cositas, no?"</div>
+
+  <!-- Imágenes -->
+  <div class="section">
+    <img src="img/imagen1.jpeg" alt="Recuerdo o imagen significativa" />
+    <div class="text">Un pequeño detalle de lo que idealizo mientras divago por las noches...<br>Verte en ese orden me vuelan las neuronas</div>
+  </div>
+
+
+  <div class="section">
+    <img src="img/imagen2.jpeg" alt="Recuerdo o imagen significativa" />
+    <div class="divider">"Que belleza es verte wey"</div>
+  </div>
+</div>
+
+  <!-- Cartas no enviadas -->
+  <div class="section">
+    <div class="title">Mensajes para cuando me necesites</div>
+    <div id="cartas-no-enviadas-container">
+      <div class="cartas-no-enviadas-wrapper">
+        <div class="carta"><p>Mi amor<br><br>No siempre supe cómo decirte lo que sentía. A veces me ganaba la vergüenza... pero nunca fue por falta de amor.<br><br>Este es uno de esos mensajes que no envié, pero escribí mil veces.<br><br><i>— Dami</i></p></div>
+        <div class="carta"><p>Capaz hoy no es el momento perfecto, pero igual te pienso con ternura. Me basta imaginarte sonriendo para que el mundo pare un segundo.<br><br><i>— Dami</i></p></div>
+        <div class="carta"><p>Alguna vez te hablé en sueños. No me acuerdo bien qué te dije, pero me desperté feliz. Creo que te decía que siempre fuiste refugio, aunque no lo supieras.<br><br><i>— Dami</i></p></div>
+        <div class="carta"><p>Si alguna vez dudaste... sí, te extraño. Incluso cuando sonrío fuerte, te extraño bajito por dentro.<br><br><i>— Dami</i></p></div>
+        <div class="carta"><p>No importa cuánto tiempo pase, lo que escribí no caduca. Son cartas sin timbre, pero con verdad.<br><br><i>— Dami</i></p></div>
+      </div>
+      <div class="botones-cartas">
+        <button id="prevNoEnviada">←</button>
+        <button id="nextNoEnviada">→</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="chat-container">
+    <div class="message dami">¿Sabés lo que más me llama la atención de ella?</div>
+    <div class="time">miércoles, 3:42 a. m.</div>
+    <div class="message dix">¿Qué cosa?</div>
+    <div class="message dami">Que tiene algo que no sabría explicar. Como si mirarla te calmara todo lo que no entendés de vos mismo.</div>
+    <div class="message dami">Es como que aparece y te acomoda el mundo sin decir nada.</div>
+    <div class="time">miércoles, 3:57 a. m.</div>
+    <div class="message dix">Que onda vos?, Dami. Desde que ella está... que somos?.</div>
+    <div class="message dami">Es que nunca sentí que alguien viera lo que yo ni siquiera sabía mostrar.</div>
+    <div class="message dix">Te juro que si ella pudiera leer esto, entendería cuánto amor hay en cada cosa que hiciste acá.</div>
+    <div class="message dami">No sé si esto lo expresa... pero al menos quiero que sepa que todo esto es un indicio.</div>
+    <div class="time">miércoles, 4:00 a. m.</div>
+    <div class="message dix">Eso esperemos....</div>
+  </div>
+
+<div class="text">
+  <div class="section">
+    <div class="text" style="text-align: center;">
+     <img src="img/png5.jpeg" alt="Nosotros" 
+       style="position: absolute; top: -57px; left: 200px; width: 180px; pointer-events: none;">
+      </a>
+    </div>
+  </div>
+</div>
+<script src="js/comportamiento.js"></script>
+</body>
+</html>

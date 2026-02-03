@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te estaba esperando</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: white;
+      font-family: 'Courier New', Courier, monospace;
+      overflow: hidden;
+    }
+
+    /* BOTÓN ÚNICO DE ACCESO */
+    #access-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 12px 24px;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    #login-screen, #frase-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      background-color: black;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+
+    #heart-animation {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    #login-input {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid white;
+      color: white;
+      font-size: 1.2em;
+      text-align: center;
+      outline: none;
+    }
+
+    #message {
+      opacity: 0;
+      position: absolute;
+      bottom: 30px;
+      font-size: 1em;
+      animation: flicker 3s infinite ease-in-out;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    #container {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .line {
+      opacity: 0;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      transition: opacity 1s ease;
+    }
+
+    #circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      background-color: rgba(255,255,255,0.05);
+      display: none;
+      animation: fillCircle 2s forwards;
+    }
+
+    @keyframes fillCircle {
+      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+      30% { opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BOTÓN ÚNICO -->
+  <button id="access-button">Gay</button>
+
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div id="heart-animation">
+      <svg width="200" height="200" viewBox="0 0 200 200">
+        <path d="M100 170s-60-36-60-90c0-30 20-50 50-30 30-20 50 0 50 30 0 54-60 90-60 90z"
+              fill="white">
+          <animateTransform
+            attributeName="transform"
+            type="scale"
+            values="1;1.1;1"
+            dur="2s"
+            repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </div>
+
+    <input id="login-input" type="password" placeholder="..." autocomplete="off">
+    <div id="message">¿Lista?</div>
+  </div>
+
+  <!-- FRASES -->
+  <div id="frase-screen">
+    <div id="container">
+      <div class="line" id="line1">¡Qué nervios!</div>
+      <div class="line" id="line2">No sé cuántas veces pense en dartelo</div>
+      <div class="line" id="line3">Si estás acá…</div>
+      <div class="line" id="line4">Gracias, sos lo mas lindo que existe</div>
+      <div class="line" id="line5">Disculpa si me tarde, toca para continuar mi amor</div>
+    </div>
+    <div id="circle"></div>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="sonidoCorazon" src="audio/latido.mp3" preload="auto"></audio>
+
+<script>
+const accessButton = document.getElementById('access-button');
+const loginScreen = document.getElementById('login-screen');
+const loginInput = document.getElementById('login-input');
+const fraseScreen = document.getElementById('frase-screen');
+const heart = document.getElementById('heart-animation');
+const audio = document.getElementById('sonidoCorazon');
+
+// Mostrar login
+accessButton.addEventListener('click', () => {
+  accessButton.style.display = 'none';
+  loginScreen.style.display = 'flex';
+});
+
+// Mostrar frases
+function showLines() {
+  const lines = document.querySelectorAll('.line');
+  lines.forEach((line, i) => {
+    setTimeout(() => line.style.opacity = 1, 1000 * (i + 1));
+  });
+}
+
+// HASH
+const hashCorrecto = "dcf0e3e876aac5559ed251a83f165226ed3f1243f1b396e179ab824be42a5ca7";
+
+async function verificarPassword(valor) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(valor);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashHex = Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+
+  if (hashHex === hashCorrecto) {
+    loginScreen.style.display = 'none';
+    fraseScreen.style.display = 'flex';
+    showLines();
+  } else {
+    loginInput.value = '';
+  }
+}
+
+loginInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    verificarPassword(loginInput.value);
+  }
+});
+
+// Sonido
+heart.addEventListener('click', () => {
+  audio.currentTime = 0;
+  audio.play();
+});
+
+// Continuar
+document.body.addEventListener('click', () => {
+  if (fraseScreen.style.display === 'flex') {
+    document.getElementById('circle').style.display = 'block';
+    setTimeout(() => {
+      window.location.href = "next.html";
+    }, 2500);
+  }
+});
+</script>
+
+</body>
+</html>
