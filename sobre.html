@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sobre — Archivo 06</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:ital,wght@0,300;1,300&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --ink: #1a1612;
+      --accent: #c4704a;
+      --gold: #b8956a;
+      --paper: #fefcf7;
+      --soft: #8c7b6b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+
+    .hint {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--soft);
+      opacity: 0;
+      margin-bottom: 40px;
+      animation: fadeUp 1s ease 0.5s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 0.6; transform: translateY(0); }
+    }
+
+    /* ——— ENVELOPE ——— */
+    .envelope-wrap {
+      position: relative;
+      cursor: pointer;
+      perspective: 1000px;
+    }
+
+    .envelope {
+      width: 320px;
+      height: 220px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+    }
+
+    .envelope:hover { transform: scale(1.03) translateY(-4px); }
+
+    /* Body */
+    .env-body {
+      width: 320px;
+      height: 220px;
+      background: #e8e0d0;
+      border-radius: 4px;
+      position: absolute;
+      bottom: 0;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    /* Inside paper visible through opening */
+    .env-inside {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--paper);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .env-heart-inside {
+      font-size: 2rem;
+      opacity: 0.3;
+    }
+
+    /* Diagonal left */
+    .env-left {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 220px 0 0 160px;
+      border-color: transparent transparent transparent #d4c9b4;
+    }
+
+    /* Diagonal right */
+    .env-right {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 220px 160px 0 0;
+      border-color: transparent #d4c9b4 transparent transparent;
+    }
+
+    /* Bottom triangle */
+    .env-bottom {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 160px 120px 160px;
+      border-color: transparent transparent #cec3ae transparent;
+    }
+
+    /* Flap */
+    .env-flap {
+      position: absolute;
+      top: 0; left: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 120px 160px 0 160px;
+      border-color: #d9d0be transparent transparent transparent;
+      transform-origin: top center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 10;
+    }
+
+    .envelope-wrap.open .env-flap {
+      transform: rotateX(180deg);
+    }
+
+    /* Wax seal */
+    .wax-seal {
+      position: absolute;
+      top: 95px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 42px;
+      height: 42px;
+      background: radial-gradient(circle at 35% 35%, #e07850, #c4704a, #9a4a2a);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 11;
+      transition: opacity 0.3s ease;
+    }
+
+    .envelope-wrap.open .wax-seal {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Letter rising */
+    .letter {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%) translateY(0);
+      width: 280px;
+      background: var(--paper);
+      border-radius: 2px;
+      padding: 32px 28px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      z-index: 5;
+      transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s,
+                  opacity 0.4s ease 0.1s;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .envelope-wrap.open .letter {
+      transform: translateX(-50%) translateY(200px);
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 20;
+    }
+
+    .letter-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .letter-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      line-height: 1.85;
+      color: var(--ink);
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    .letter-sign {
+      margin-top: 20px;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--accent);
+      text-align: right;
+    }
+
+    /* Nav back */
+    .back-link {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .chapter-label {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      opacity: 0.4;
+      text-transform: uppercase;
+    }
+
+    .close-letter {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1rem;
+      color: var(--soft);
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .envelope-wrap.open .close-letter { display: block; }
+  </style>
+</head>
+<body>
+
+  <a href="next.html" class="back-link">← volver</a>
+  <span class="chapter-label">capítulo / sobre</span>
+
+  <p class="hint">tocá el sobre para abrirlo</p>
+
+  <div class="envelope-wrap" id="envelopeWrap">
+    <div class="envelope">
+      <div class="env-body">
+        <div class="env-inside">
+          <span class="env-heart-inside">♡</span>
+        </div>
+        <div class="env-left"></div>
+        <div class="env-right"></div>
+        <div class="env-bottom"></div>
+      </div>
+      <div class="env-flap"></div>
+      <div class="wax-seal">✦</div>
+
+      <div class="letter">
+        <button class="close-letter" id="closeLetter">✕</button>
+        <span class="letter-date">una noche cualquiera · 2026</span>
+        <div class="letter-body">
+Escribí esto cuando todavía no sabía si iba a darte algo.<br><br>
+Pero lo escribí igual.<br><br>
+Porque a veces uno necesita poner afuera lo que no cabe adentro.<br><br>
+Y vos, sin saber, llenaste un espacio que ni yo sabía que estaba vacío.<br><br>
+Gracias por existir de la forma que existís.
+        </div>
+        <div class="letter-sign">— Dami</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const wrap = document.getElementById('envelopeWrap');
+    const closeBtn = document.getElementById('closeLetter');
+
+    wrap.addEventListener('click', (e) => {
+      if (e.target === closeBtn) return;
+      wrap.classList.toggle('open');
+    });
+
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      wrap.classList.remove('open');
+    });
+  </script>
+
+</body>
+</html>

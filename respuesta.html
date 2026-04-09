@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tu respuesta — Archivo 06</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=DM+Mono:ital,wght@0,300;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0c0a;
+      --ink: #f0ebe3;
+      --accent: #c4704a;
+      --gold: #b8956a;
+      --soft: rgba(240, 235, 227, 0.4);
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 100px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 300px;
+      background: radial-gradient(ellipse, rgba(196, 112, 74, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .form-wrap {
+      max-width: 540px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--soft);
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 2rem;
+      font-weight: 400;
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--soft);
+      font-style: italic;
+      margin: 0 0 48px;
+    }
+
+    /* Form fields */
+    .field {
+      margin-bottom: 32px;
+    }
+
+    label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.25s ease;
+      resize: none;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: rgba(196, 112, 74, 0.5);
+    }
+
+    textarea {
+      min-height: 160px;
+      line-height: 1.7;
+    }
+
+    /* Mood selector */
+    .mood-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mood-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--soft);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mood-btn:hover, .mood-btn.selected {
+      border-color: rgba(196, 112, 74, 0.6);
+      color: var(--accent);
+      background: rgba(196, 112, 74, 0.06);
+    }
+
+    /* Submit */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid rgba(240, 235, 227, 0.25);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 2px;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover {
+      background: rgba(240, 235, 227, 0.06);
+      border-color: rgba(240, 235, 227, 0.5);
+    }
+
+    /* Success state */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .success-msg.visible { display: block; }
+
+    .success-heart {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 20px;
+      animation: heartbeat 1.4s ease infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .success-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.8rem;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .success-sub {
+      font-size: 1rem;
+      color: var(--soft);
+      font-style: italic;
+    }
+
+    /* Saved messages display */
+    .saved-section {
+      margin-top: 60px;
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
+    }
+
+    .saved-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .saved-msg {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .saved-msg-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .saved-msg-text {
+      font-size: 1.05rem;
+      color: rgba(240, 235, 227, 0.75);
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .saved-msg-mood {
+      font-size: 0.85rem;
+      margin-top: 8px;
+      color: var(--soft);
+    }
+
+    .no-msgs {
+      font-size: 0.9rem;
+      color: var(--soft);
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* Back */
+    .back-link {
+      position: fixed; top: 24px; left: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+    .back-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <a href="next.html" class="back-link">← volver</a>
+
+  <div class="form-wrap">
+    <span class="page-label">capítulo / respuesta</span>
+    <h1>Lo que vos querés decir</h1>
+    <p class="subtitle">Este espacio es tuyo. No tiene que ser perfecto.</p>
+
+    <form id="realForm" action="https://formspree.io/f/mdapvggj" method="POST">
+
+      <label>tu nombre</label>
+      <input type="text" name="name" id="fieldName"><br>
+      <br>
+
+      <label>¿Cómo te llegó?</label>
+
+      <div class="mood-group">
+        <button type="button" class="mood-btn" data-mood="😭 me partió">😭 me partió</button>
+        <button type="button" class="mood-btn" data-mood="🥺 ay dios">🥺 ay dios</button>
+        <button type="button" class="mood-btn" data-mood="🤭 muy de gay">🤭 muy de gay</button>
+        <button type="button" class="mood-btn" data-mood="🥰 me encantó">🥰 me encantó</button>
+        <button type="button" class="mood-btn" data-mood="😤 después te digo">😤 después te digo</button>
+      </div>
+
+      <input type="hidden" name="mood" id="hiddenMood"><br>
+      <br>
+
+      <label>tu mensaje</label>
+      <textarea name="message" id="fieldMsg"></textarea>
+
+      <button type="submit" class="submit-btn">enviar →</button>
+
+    </form>
+
+    <div class="success-msg" id="successMsg">
+      <span class="success-heart">♡</span>
+      <div class="success-title">Guardado.</div>
+      <p class="success-sub">Dami lo va a ver.</p>
+    </div>
+
+    <!-- Mensajes guardados -->
+    <div class="saved-section" id="savedSection" style="display:none;">
+      <span class="saved-label">respuestas guardadas</span>
+      <div id="savedList"></div>
+    </div>
+  </div>
+
+  <script>
+    let selectedMood = '';
+
+    document.querySelectorAll('.mood-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedMood = btn.dataset.mood;
+      });
+    });
+
+    document.getElementById('realForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      document.getElementById('hiddenMood').value = selectedMood;
+
+      const form = e.target;
+      const data = new FormData(form);
+
+      await fetch(form.action, {
+        method: "POST",
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      form.style.display = 'none';
+      document.getElementById('successMsg').classList.add('visible');
+    });
+  </script>
+
+</body>
+</html>
+

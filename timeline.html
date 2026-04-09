@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timeline — Archivo 06</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=DM+Mono:ital,wght@0,300;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --ink: #1a1612;
+      --accent: #c4704a;
+      --gold: #b8956a;
+      --soft: #8c7b6b;
+      --paper: #fefcf7;
+      --line: rgba(184, 149, 106, 0.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+
+    /* ——— CONTADOR ——— */
+    .counter-section {
+      text-align: center;
+      padding: 80px 20px 60px;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.2s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--soft);
+      opacity: 0.7;
+      display: block;
+      margin-bottom: 32px;
+    }
+
+    .counter-main {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .counter-number {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4rem, 15vw, 9rem);
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .counter-unit {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-left: 16px;
+      align-self: center;
+    }
+
+    .counter-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--soft);
+      margin-top: 20px;
+      display: block;
+    }
+
+    .counter-since {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: rgba(140, 123, 107, 0.5);
+      margin-top: 10px;
+      display: block;
+      text-transform: uppercase;
+    }
+
+    .divider-line {
+      max-width: 500px;
+      margin: 60px auto;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+
+    /* ——— TIMELINE ——— */
+    .timeline-section {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 24px 120px;
+    }
+
+    .timeline-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.9rem;
+      text-align: center;
+      margin-bottom: 60px;
+      color: var(--ink);
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 0;
+    }
+
+    /* Central line */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--line) 10%, var(--line) 90%, transparent);
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr;
+      gap: 0;
+      margin-bottom: 60px;
+      opacity: 0;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      transform: translateY(20px);
+    }
+
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Left items */
+    .timeline-item:nth-child(odd) .item-content {
+      grid-column: 1;
+      text-align: right;
+      padding-right: 28px;
+    }
+
+    .timeline-item:nth-child(odd) .item-empty {
+      grid-column: 3;
+    }
+
+    /* Right items */
+    .timeline-item:nth-child(even) .item-content {
+      grid-column: 3;
+      text-align: left;
+      padding-left: 28px;
+    }
+
+    .timeline-item:nth-child(even) .item-empty {
+      grid-column: 1;
+    }
+
+    .item-dot {
+      grid-column: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .item-dot::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px rgba(196, 112, 74, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .timeline-item:hover .item-dot::before {
+      transform: scale(1.5);
+    }
+
+    .item-content {}
+
+    .item-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .item-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--ink);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .item-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.98rem;
+      color: var(--soft);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .item-emoji {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    /* Add future item placeholder */
+    .timeline-future {
+      text-align: center;
+      padding: 30px;
+      border: 1.5px dashed rgba(140, 123, 107, 0.25);
+      border-radius: 4px;
+      margin: 40px auto;
+      max-width: 320px;
+    }
+
+    .timeline-future-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--soft);
+      opacity: 0.4;
+    }
+
+    /* Back */
+    .back-link {
+      position: fixed; top: 24px; left: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    @media (max-width: 580px) {
+      .timeline::before { left: 16px; }
+      .timeline-item {
+        grid-template-columns: 32px 1fr;
+      }
+      .timeline-item:nth-child(odd) .item-content,
+      .timeline-item:nth-child(even) .item-content {
+        grid-column: 2;
+        text-align: left;
+        padding-left: 20px;
+        padding-right: 0;
+      }
+      .timeline-item:nth-child(odd) .item-empty,
+      .timeline-item:nth-child(even) .item-empty { display: none; }
+      .item-dot { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="next.html" class="back-link">← volver</a>
+
+  <!-- Contador -->
+  <div class="counter-section">
+    <span class="page-label">capítulo / historia</span>
+    <div class="counter-main">
+      <span class="counter-number" id="daysCounter">...</span>
+      <span class="counter-unit">días</span>
+    </div>
+    <span class="counter-subtitle">que estamos juntos</span>
+    <span class="counter-since" id="sinceLabel"></span>
+  </div>
+
+  <div class="divider-line"></div>
+
+  <!-- Timeline -->
+  <div class="timeline-section">
+    <h2 class="timeline-title">Lo que pasó entre nosotros</h2>
+
+    <div class="timeline">
+
+      <!-- Fechas y textos -->
+
+      <div class="timeline-item">
+        <div class="item-content">
+          <span class="item-emoji">✨</span>
+          <span class="item-date">el principio</span>
+          <span class="item-title">El día que te conocí</span>
+          <span class="item-desc">No sé bien qué pasó ese día, pero terminé con terrible lanza nive en media jeta.</span>
+        </div>
+        <div class="item-dot"></div>
+        <div class="item-empty"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="item-empty"></div>
+        <div class="item-dot"></div>
+        <div class="item-content">
+          <span class="item-emoji">💬</span>
+          <span class="item-date">los primeros mensajes</span>
+          <span class="item-title">Peor que paracetamol</span>
+          <span class="item-desc">De esas charlas que seguían despues de años desaparecidos.</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="item-content">
+          <span class="item-emoji">🌙</span>
+          <span class="item-date">una madrugada</span>
+          <span class="item-title">La primera vez que soñé con vos</span>
+          <span class="item-desc">Y ahí supe que esto ya era raro.</span>
+        </div>
+        <div class="item-dot"></div>
+        <div class="item-empty"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="item-empty"></div>
+        <div class="item-dot"></div>
+        <div class="item-content">
+          <span class="item-emoji">🍕</span>
+          <span class="item-date">un momento cualquiera</span>
+          <span class="item-title">Cuando me di cuenta</span>
+          <span class="item-desc">Ya no era normal la tensión entre nosotros.</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="item-content">
+          <span class="item-emoji">🖥️</span>
+          <span class="item-date">febrero 2026</span>
+          <span class="item-title">Este sitio</span>
+          <span class="item-desc">Muchas madrugadas, errores, y teclas para llegar hasta acá.</span>
+        </div>
+        <div class="item-dot"></div>
+        <div class="item-empty"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="item-empty"></div>
+        <div class="item-dot"></div>
+        <div class="item-content">
+          <span class="item-emoji">♾️</span>
+          <span class="item-date">lo que viene</span>
+          <span class="item-title">Todavía no pasó</span>
+          <span class="item-desc">Pero tengo ganas de que pase.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="timeline-future">
+      <div class="timeline-future-text">+ capítulos por escribir</div>
+    </div>
+
+  </div>
+
+  <script>
+    // ——— CONTADOR ——— 
+    const fechaConociste = new Date("2025-11-17T00:00:00"); 
+    function updateCounter() {
+      const now = new Date();
+      const diff = now - fechaConociste;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      document.getElementById('daysCounter').textContent = days.toLocaleString('es-AR');
+      document.getElementById('sinceLabel').textContent =
+        `desde el ${fechaConociste.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+    }
+
+    updateCounter();
+    setInterval(updateCounter, 60000);
+
+    // ——— TIMELINE SCROLL ANIMATION ———
+    const items = document.querySelectorAll('.timeline-item');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.2 });
+
+    items.forEach(item => obs.observe(item));
+  </script>
+
+</body>
+</html>

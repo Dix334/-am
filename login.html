@@ -4,32 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Te estaba esperando</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=DM+Mono:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 0;
-      background-color: black;
-      color: white;
-      font-family: 'Courier New', Courier, monospace;
+      background-color: #0c0b09;
+      color: #f0ebe3;
+      font-family: 'DM Mono', monospace;
       overflow: hidden;
+      height: 100vh;
     }
 
-    /* BOTÓN ÚNICO DE ACCESO */
+    /* Grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+
+    /* Entry button */
     #access-button {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background-color: transparent;
-      border: 2px solid white;
-      color: white;
-      padding: 12px 24px;
-      font-size: 1rem;
+      background: transparent;
+      border: 1px solid rgba(240, 235, 227, 0.35);
+      color: rgba(240, 235, 227, 0.7);
+      padding: 16px 36px;
+      border-radius: 2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
       cursor: pointer;
+      transition: all 0.4s ease;
       z-index: 10;
     }
 
+    #access-button:hover {
+      border-color: rgba(196, 112, 74, 0.7);
+      color: #c4704a;
+      box-shadow: 0 0 30px rgba(196, 112, 74, 0.15),
+                  0 0 60px rgba(196, 112, 74, 0.08);
+    }
+
+    /* Screens */
     #login-screen, #frase-screen {
       display: none;
       flex-direction: column;
@@ -37,36 +67,70 @@
       justify-content: center;
       height: 100vh;
       width: 100vw;
-      background-color: black;
+      background-color: #0c0b09;
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       z-index: 100;
     }
 
+    /* Heart */
     #heart-animation {
-      width: 200px;
-      height: 200px;
-      margin-bottom: 20px;
+      width: 140px;
+      height: 140px;
+      margin-bottom: 36px;
       cursor: pointer;
+      opacity: 0.75;
+      transition: opacity 0.3s;
+    }
+
+    #heart-animation:hover { opacity: 1; }
+
+    /* Input */
+    .input-wrapper {
+      position: relative;
+      margin-top: 8px;
+    }
+
+    .input-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: rgba(240, 235, 227, 0.3);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+      text-align: center;
     }
 
     #login-input {
       background: transparent;
       border: none;
-      border-bottom: 2px solid white;
-      color: white;
-      font-size: 1.2em;
+      border-bottom: 1px solid rgba(240, 235, 227, 0.2);
+      color: #f0ebe3;
+      font-family: 'DM Mono', monospace;
+      font-size: 1.4rem;
+      letter-spacing: 0.4em;
       text-align: center;
       outline: none;
+      width: 200px;
+      padding: 8px 0;
+      transition: border-color 0.3s;
+    }
+
+    #login-input:focus {
+      border-bottom-color: rgba(196, 112, 74, 0.5);
     }
 
     #message {
-      opacity: 0;
       position: absolute;
-      bottom: 30px;
-      font-size: 1em;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
       animation: flicker 3s infinite ease-in-out;
+      color: rgba(240, 235, 227, 0.3);
+      white-space: nowrap;
+      text-transform: uppercase;
     }
 
     @keyframes flicker {
@@ -74,82 +138,100 @@
       50% { opacity: 1; }
     }
 
+    /* Frase screen */
+    #frase-screen {
+      padding: 40px;
+    }
+
     #container {
       text-align: center;
-      padding: 20px;
+      max-width: 520px;
     }
 
     .line {
       opacity: 0;
-      font-size: 1.4rem;
-      margin-bottom: 1rem;
-      transition: opacity 1s ease;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.5rem;
+      margin-bottom: 1.4rem;
+      line-height: 1.5;
+      transition: opacity 1.2s ease;
+      color: #f0ebe3;
     }
 
+    .line:last-child {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      font-family: 'DM Mono', monospace;
+      opacity: 0;
+      color: rgba(240, 235, 227, 0.4);
+      text-transform: uppercase;
+    }
+
+    /* Circle expand */
     #circle {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 120px;
-      height: 120px;
+      transform: translate(-50%, -50%) scale(0);
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.3);
-      background-color: rgba(255,255,255,0.05);
+      background-color: #f0ebe3;
       display: none;
-      animation: fillCircle 2s forwards;
+      animation: expandCircle 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      z-index: 200;
     }
 
-    @keyframes fillCircle {
-      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-      30% { opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    @keyframes expandCircle {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(200); opacity: 1; }
     }
 
-    audio {
-      display: none;
-    }
+    audio { display: none; }
   </style>
 </head>
 
 <body>
 
-  <!-- BOTÓN ÚNICO -->
-  <button id="access-button">Gay</button>
+  <button id="access-button">¿Muy de gay decís?</button>
 
-  <!-- LOGIN -->
   <div id="login-screen">
     <div id="heart-animation">
-      <svg width="200" height="200" viewBox="0 0 200 200">
-        <path d="M100 170s-60-36-60-90c0-30 20-50 50-30 30-20 50 0 50 30 0 54-60 90-60 90z"
-              fill="white">
+      <svg width="140" height="140" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 160 C100 160 30 118 30 72 C30 46 50 30 75 40 C87 45 100 55 100 55 C100 55 113 45 125 40 C150 30 170 46 170 72 C170 118 100 160 100 160Z"
+              fill="#c4704a" opacity="0.85">
           <animateTransform
             attributeName="transform"
             type="scale"
-            values="1;1.1;1"
-            dur="2s"
-            repeatCount="indefinite"/>
+            values="1;1.07;0.98;1.05;1"
+            dur="1.4s"
+            repeatCount="indefinite"
+            additive="sum"
+            transformType="scale"
+            origin="100 100"/>
         </path>
       </svg>
     </div>
 
-    <input id="login-input" type="password" placeholder="..." autocomplete="off">
+    <div class="input-wrapper">
+      <span class="input-label">contraseña</span>
+      <input id="login-input" type="password" autocomplete="off" spellcheck="false">
+    </div>
     <div id="message">¿Lista?</div>
   </div>
 
-  <!-- FRASES -->
   <div id="frase-screen">
     <div id="container">
       <div class="line" id="line1">¡Qué nervios!</div>
-      <div class="line" id="line2">No sé cuántas veces pense en dartelo</div>
+      <div class="line" id="line2">No sé cuántas veces pensé en dartelo</div>
       <div class="line" id="line3">Si estás acá…</div>
-      <div class="line" id="line4">Gracias, sos lo mas lindo que existe</div>
-      <div class="line" id="line5">Disculpa si me tarde, toca para continuar mi amor</div>
+      <div class="line" id="line4">Gracias, sos lo más lindo que existe</div>
+      <div class="line" id="line5">toca para continuar, mi amor</div>
     </div>
     <div id="circle"></div>
   </div>
 
-  <!-- AUDIO -->
   <audio id="sonidoCorazon" src="audio/latido.mp3" preload="auto"></audio>
 
 <script>
@@ -160,21 +242,26 @@ const fraseScreen = document.getElementById('frase-screen');
 const heart = document.getElementById('heart-animation');
 const audio = document.getElementById('sonidoCorazon');
 
-// Mostrar login
 accessButton.addEventListener('click', () => {
-  accessButton.style.display = 'none';
-  loginScreen.style.display = 'flex';
+  accessButton.style.opacity = '0';
+  accessButton.style.transition = 'opacity 0.5s ease';
+  setTimeout(() => {
+    accessButton.style.display = 'none';
+    loginScreen.style.display = 'flex';
+    loginScreen.style.opacity = '0';
+    loginScreen.style.transition = 'opacity 0.8s ease';
+    setTimeout(() => loginScreen.style.opacity = '1', 50);
+    setTimeout(() => loginInput.focus(), 800);
+  }, 500);
 });
 
-// Mostrar frases
 function showLines() {
   const lines = document.querySelectorAll('.line');
   lines.forEach((line, i) => {
-    setTimeout(() => line.style.opacity = 1, 1000 * (i + 1));
+    setTimeout(() => line.style.opacity = 1, 900 * (i + 1));
   });
 }
 
-// HASH
 const hashCorrecto = "dcf0e3e876aac5559ed251a83f165226ed3f1243f1b396e179ab824be42a5ca7";
 
 async function verificarPassword(valor) {
@@ -185,33 +272,41 @@ async function verificarPassword(valor) {
     .map(b => b.toString(16).padStart(2, '0')).join('');
 
   if (hashHex === hashCorrecto) {
-    loginScreen.style.display = 'none';
-    fraseScreen.style.display = 'flex';
-    showLines();
+    loginScreen.style.opacity = '0';
+    loginScreen.style.transition = 'opacity 0.6s ease';
+    setTimeout(() => {
+      loginScreen.style.display = 'none';
+      fraseScreen.style.display = 'flex';
+      fraseScreen.style.opacity = '0';
+      fraseScreen.style.transition = 'opacity 0.8s ease';
+      setTimeout(() => fraseScreen.style.opacity = '1', 50);
+      showLines();
+    }, 600);
   } else {
+    loginInput.style.borderBottomColor = 'rgba(220, 80, 80, 0.6)';
     loginInput.value = '';
+    setTimeout(() => { loginInput.style.borderBottomColor = ''; }, 800);
   }
 }
 
 loginInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    verificarPassword(loginInput.value);
-  }
+  if (e.key === 'Enter') verificarPassword(loginInput.value);
 });
 
-// Sonido
 heart.addEventListener('click', () => {
   audio.currentTime = 0;
   audio.play();
 });
 
-// Continuar
-document.body.addEventListener('click', () => {
-  if (fraseScreen.style.display === 'flex') {
-    document.getElementById('circle').style.display = 'block';
+let clickedContinue = false;
+document.body.addEventListener('click', (e) => {
+  if (fraseScreen.style.display === 'flex' && !clickedContinue && e.target !== heart) {
+    clickedContinue = true;
+    const circle = document.getElementById('circle');
+    circle.style.display = 'block';
     setTimeout(() => {
       window.location.href = "next.html";
-    }, 2500);
+    }, 2000);
   }
 });
 </script>

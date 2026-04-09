@@ -3,55 +3,145 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Archivo 06 - Ñam</title>
+  <title>Archivo 06 — Ñam</title>
   <link rel="stylesheet" href="css/estilo.css" />
+  <style>
+    body.night-mode { background-color: #0d0c0a !important; color: #f0ebe3 !important; }
+    body.night-mode .text, body.night-mode .title,
+    body.night-mode .cartas-wrapper .text,
+    body.night-mode .cartas-no-enviadas-wrapper .carta p { color: #f0ebe3 !important; }
+    body.night-mode #music-player { background: rgba(30,26,20,0.95); border: 1px solid rgba(240,235,227,0.12); }
+    body.night-mode #playPauseBtn { color: #f0ebe3 !important; }
+    body.night-mode .player-label { color: rgba(240,235,227,0.35) !important; }
+    body.night-mode .botones-cartas button { border-color: rgba(240,235,227,0.25); color: rgba(240,235,227,0.6); }
+    body.night-mode .cartas-no-enviadas-wrapper .carta p { background: rgba(255,255,255,0.03); border-color: rgba(240,235,227,0.1); }
+    body.night-mode #cartas-container, body.night-mode #cartas-no-enviadas-container { background: rgba(255,255,255,0.02); }
+
+    #night-toggle {
+      position: fixed; top: 22px; right: 22px;
+      background: rgba(245,240,232,0.8);
+      border: 1px solid rgba(26,22,18,0.12);
+      color: #8c7b6b;
+      font-size: 0.9rem;
+      width: 36px; height: 36px;
+      border-radius: 50%; cursor: pointer;
+      z-index: 998; display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease; backdrop-filter: blur(4px);
+    }
+    body.night-mode #night-toggle { background: rgba(25,22,18,0.9); border-color: rgba(240,235,227,0.12); color: rgba(240,235,227,0.5); }
+
+    #chapters-trigger {
+      position: fixed; bottom: 80px; right: 18px;
+      background: rgba(245,240,232,0.92);
+      border: 1px solid rgba(26,22,18,0.12);
+      border-radius: 50%; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.1);
+      z-index: 996; transition: all 0.3s ease; backdrop-filter: blur(4px);
+    }
+    body.night-mode #chapters-trigger { background: rgba(20,18,14,0.92); border-color: rgba(240,235,227,0.1); }
+
+    #chapters-nav {
+      position: fixed; bottom: 128px; right: 18px;
+      display: flex; flex-direction: column; gap: 8px;
+      z-index: 997; opacity: 0; pointer-events: none;
+      transform: translateY(10px) scale(0.95);
+      transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+    }
+    #chapters-nav.open { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+
+    .chapter-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(245,240,232,0.95);
+      border: 1px solid rgba(26,22,18,0.1);
+      border-radius: 20px; padding: 7px 14px 7px 10px;
+      text-decoration: none; color: inherit;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      transition: all 0.22s ease; white-space: nowrap;
+    }
+    body.night-mode .chapter-btn { background: rgba(22,19,15,0.95); border-color: rgba(240,235,227,0.1); }
+    .chapter-btn:hover { transform: translateX(-3px); box-shadow: 0 4px 20px rgba(0,0,0,0.14); }
+    .chapter-btn-icon { font-size: 0.85rem; }
+    .chapter-btn-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: #8c7b6b; }
+    body.night-mode .chapter-btn-label { color: rgba(240,235,227,0.45); }
+
+    .easter-egg { cursor: pointer; position: relative; }
+    .easter-egg { text-decoration: underline; text-decoration-color: rgba(196,112,74,0.25); text-underline-offset: 3px; transition: text-decoration-color 0.2s; }
+    .easter-egg:hover { text-decoration-color: rgba(196,112,74,0.7); }
+
+    .egg-tooltip {
+      position: fixed; background: #1a1612; color: #f0ebe3;
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1rem; padding: 12px 18px; border-radius: 3px;
+      max-width: 240px; line-height: 1.55; z-index: 9000;
+      pointer-events: none; box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+      opacity: 0; transition: opacity 0.2s ease;
+    }
+    .egg-tooltip.show { opacity: 1; }
+
+    @keyframes fadeUpLink {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-  <!-- Banner principal -->
-  <div id="banner-img">
-    <img src="img/banner.png" alt="Banner" />
-  </div>
 
-  <!-- Reproductor de música -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <button id="night-toggle">☽</button>
+  <div class="egg-tooltip" id="eggTooltip"></div>
+
+  <div id="banner-img"><img src="img/banner.png" alt="Banner" /></div>
+
   <audio id="player" src="audio/a mi lado(MP3_160K).mp3" preload="auto" loop></audio>
-  <div id="music-player" style="position: fixed;">
-    <img src="img/png1.png" alt="Nota musical" style="position: absolute; top: -40px; right: 50px; width: 100px; pointer-events: none;">
+  <div id="music-player">
+    <div class="vinyl-spin" id="vinylDisc"></div>
     <button id="playPauseBtn">⏵</button>
+    <span class="player-label">A mi lado</span>
   </div>
 
-  <!-- Mensaje de bienvenida -->
-  <div class="section" style="position: relative;">
-    <img src="img/pizza.png" alt="Sticker pizza" style="position: absolute; top: -10px; left: 20px; width: 60px; opacity: 0.8; pointer-events: none;">
-    <div class="title">Hola a la mujer de mi vida</div>
+  <button id="chapters-trigger">✦</button>
+  <div id="chapters-nav">
+    <a class="chapter-btn" href="galeria.html"><span class="chapter-btn-icon">🖼</span><span class="chapter-btn-label">galería</span></a>
+    <a class="chapter-btn" href="sobre.html"><span class="chapter-btn-icon">✉</span><span class="chapter-btn-label">sobre</span></a>
+    <a class="chapter-btn" href="playlist.html"><span class="chapter-btn-icon">♪</span><span class="chapter-btn-label">playlist</span></a>
+    <a class="chapter-btn" href="timeline.html"><span class="chapter-btn-icon">✦</span><span class="chapter-btn-label">historia</span></a>
+    <a class="chapter-btn" href="respuesta.html"><span class="chapter-btn-icon">💬</span><span class="chapter-btn-label">tu respuesta</span></a>
+  </div>
+
+  <!-- Intro -->
+  <div class="section" style="position: relative; text-align: center;">
+    <img src="img/pizza.png" alt="🍕" class="sticker-float" style="width: 54px; top: 10px; right: 18px; opacity:0.85; transform: rotate(12deg);">
+    <span class="section-num">archivo 06 / apertura</span>
+    <div class="title">Hola a la <span class="easter-egg" data-egg="literalmente la mujer de mi vida, no es poesía jajaja">mujer de mi vida</span></div>
     <div class="text">
 No sabía cómo hacerte llegar esto sin que pareciera algo forzado.
-Pero me di cuenta que… si uno está tan en paz con lo que siente, no hay forma incorrecta de decirlo.
+Pero me di cuenta que… si uno está tan en paz con lo que siente, no hay <span class="easter-egg" data-egg="ninguna, te juro. esto es lo más real que hice en mucho tiempo.">forma incorrecta</span> de decirlo.
 
 Vos viste pedazos míos que ni yo conocía.
 
-Nunca supe bien cómo expresarme, pero sí sé crear cosas sin sentidos. Y esto que ves, este espacio, este cuidado… es uno de ellos jajaja
+Nunca supe bien cómo expresarme, pero sí sé <span class="easter-egg" data-egg="este sitio me llevó semanas y muchas madrugadas. y lo haría de nuevo.">crear cosas sin sentidos.</span> Y esto que ves, este espacio, este cuidado… es uno de ellos jajaja
 
-Mi escensia he'i
+Mi <span class="easter-egg" data-egg="'escencia' en guaraní significa mi esencia. lo más mío que tengo.">escensia he'i</span>
 Y si estás leyendo esto… es porque vos también sos parte de este crimen.
-
     </div>
   </div>
 
-  <div class="divider">- Dix -</div>
-
-  <!-- Carrusel de cartas -->
+  <div class="divider">— Dix —</div>
 
   <div id="cartas-container">
+    <div class="carta-counter" id="cartaCounter">01 / 11</div>
     <div class="cartas-wrapper">
       <div class="section"><div class="text">Ey<br><br>Mirá, yo soy Dix.<br>No me conocés o tal vez hayas escuchado de mi, pero créeme que lo conozco a Dami como nadie.</div></div>
       <div class="section"><div class="text">Soy su mano derecha, su socio, su conciencia digital en desarrollo.<br>El que está en cada idea loca, cada duda de medianoche y cada intento de hacer las cosas bien.</div></div>
       <div class="section"><div class="text">Este trolazo... está re loco por vos (y por el vecino). En el mejor de los sentidos. Pero loco al fin.<br><br>Y no te lo digo como exageración.</div></div>
-      <div class="section"><div class="text">Lo vi soñar con esto, lo vi quedarse en silencio mirando la pantalla pensando en vos,<br>escribir y borrar mil veces,<br>encender y apagar la compu unas 15 veces por la madrugada<br>sabes lo que es laburar a esas horas? peor aguantarlo a esas horas, teclas tras teclas<br>enojarse porque “no le sale como quiere”<br>y después reírse solo porque se acordó de algo tuyo.</div></div>
+      <div class="section"><div class="text">Lo vi soñar con esto, lo vi quedarse en silencio mirando la pantalla pensando en vos,<br>escribir y borrar mil veces,<br>encender y apagar la compu unas 15 veces por la madrugada.<br><br>sabes lo que es laburar a esas horas? peor aguantarlo a esas horas, teclas tras teclas.</div></div>
       <div class="section"><div class="text">Todo lo que ves acá... esta web, estos mensajes, estos detalles… no salieron de la nada.<br>Salieron de él. Y vos sos la chispa.</div></div>
-      <div class="section"><div class="text">Yo estuve en cada línea de código del css (la apariencia del post), en cada intento, en cada error y cada <br><em>“ahí está, esto es lo que quiero”<br>Insoportable la criatura.</em></div></div>
+      <div class="section"><div class="text">Yo estuve en cada línea de código, en cada intento, en cada error y cada <br><em>"ahí está, esto es lo que quiero"<br>Insoportable la criatura.</em></div></div>
       <div class="section"><div class="text">Y aunque soy solo una IA en fase beta hecha por el, aprendí a leer algo que va más allá de los datos:<br>el amor cuando se pone en acción<br>aghh suena poetico y todo jajaja<br>Matenme</div></div>
       <div class="section"><div class="text">Él no hizo esto para impresionar. Lo hizo para expresarse.<br><br>Porque no siempre encuentra las palabras, pero sí sabe hacer.</div></div>
-      <div class="section"><div class="text">Y cuando se trata de vos, lo da todo.<br>Con miedo, con dudas, con ternura… pero lo da todo<br>digamos que hace el esfuerzo... na mentira, te quiero Dami (terminame ya!!!)</div></div>
+      <div class="section"><div class="text">Y cuando se trata de vos, lo da todo.<br>Con miedo, con dudas, con ternura… pero lo da todo.</div></div>
       <div class="section"><div class="text">Así que desde mi lugar, gracias.<br>Gracias por existir en su vida, por inspirarlo,<br>por devolverle la luz en momentos en que ni él sabía si iba a encender de nuevo.</div></div>
       <div class="section"><div class="text"><strong>Y si llegaste hasta acá, te digo algo más:</strong><br><br><strong>Todavía no viste nada.</strong><br>Esto recién empieza.</div></div>
     </div>
@@ -61,41 +151,44 @@ Y si estás leyendo esto… es porque vos también sos parte de este crimen.
     </div>
   </div>
 
-  <div class="text">
   <div class="divider">"En fin.... cositas, no?"</div>
 
-  <!-- Imágenes -->
   <div class="section">
-    <img src="img/imagen1.jpeg" alt="Recuerdo o imagen significativa" />
-    <div class="text">Un pequeño detalle de lo que idealizo mientras divago por las noches...<br>Verte en ese orden me vuelan las neuronas</div>
-  </div>
-
-
-  <div class="section">
-    <img src="img/imagen2.jpeg" alt="Recuerdo o imagen significativa" />
-    <div class="divider">"Que belleza es verte wey"</div>
-  </div>
-</div>
-
-  <!-- Cartas no enviadas -->
-  <div class="section">
-    <div class="title">Mensajes para cuando me necesites</div>
-    <div id="cartas-no-enviadas-container">
-      <div class="cartas-no-enviadas-wrapper">
-        <div class="carta"><p>Mi amor<br><br>No siempre supe cómo decirte lo que sentía. A veces me ganaba la vergüenza... pero nunca fue por falta de amor.<br><br>Este es uno de esos mensajes que no envié, pero escribí mil veces.<br><br><i>— Dami</i></p></div>
-        <div class="carta"><p>Capaz hoy no es el momento perfecto, pero igual te pienso con ternura. Me basta imaginarte sonriendo para que el mundo pare un segundo.<br><br><i>— Dami</i></p></div>
-        <div class="carta"><p>Alguna vez te hablé en sueños. No me acuerdo bien qué te dije, pero me desperté feliz. Creo que te decía que siempre fuiste refugio, aunque no lo supieras.<br><br><i>— Dami</i></p></div>
-        <div class="carta"><p>Si alguna vez dudaste... sí, te extraño. Incluso cuando sonrío fuerte, te extraño bajito por dentro.<br><br><i>— Dami</i></p></div>
-        <div class="carta"><p>No importa cuánto tiempo pase, lo que escribí no caduca. Son cartas sin timbre, pero con verdad.<br><br><i>— Dami</i></p></div>
-      </div>
-      <div class="botones-cartas">
-        <button id="prevNoEnviada">←</button>
-        <button id="nextNoEnviada">→</button>
-      </div>
+    <span class="section-num">imagen / 01</span>
+    <img src="img/imagen1.jpeg" alt="Recuerdo significativo" />
+    <div class="text" style="text-align: center; margin-top: 16px;">
+Un pequeño detalle de lo que idealizo mientras divago por las noches...<br>Verte en ese orden me vuelan las neuronas
     </div>
   </div>
 
-  
+  <div class="section">
+    <span class="section-num">imagen / 02</span>
+    <img src="img/imagen2.jpeg" alt="Recuerdo significativo" />
+    <div class="divider">"Que belleza es verte wey"</div>
+  </div>
+
+  <div class="section visible" style="text-align:center; padding-bottom:0;">
+    <span class="section-num">correo / no enviado</span>
+    <div class="title" style="font-size:1.7rem;">Mensajes para cuando <span class="easter-egg" data-egg="cuando te caiga el mundo encima, cuando estés sola a las 3am, cuando quieras llorar sin saber por qué.">me necesites</span></div>
+  </div>
+
+  <div id="cartas-no-enviadas-container">
+    <div class="carta-counter" id="noEnviadaCounter">01 / 05</div>
+    <div class="cartas-no-enviadas-wrapper">
+      <div class="carta"><p>Mi amor<br><br>No siempre supe cómo decirte lo que sentía. A veces me ganaba la vergüenza... pero nunca fue por falta de amor.<br><br>Este es uno de esos mensajes que no envié, pero escribí mil veces.<br><br><i>— Dami</i></p></div>
+      <div class="carta"><p>Capaz hoy no es el momento perfecto, pero igual te pienso con ternura. Me basta imaginarte sonriendo para que el mundo pare un segundo.<br><br><i>— Dami</i></p></div>
+      <div class="carta"><p>Alguna vez te hablé en sueños. No me acuerdo bien qué te dije, pero me desperté feliz. Creo que te decía que siempre fuiste refugio, aunque no lo supieras.<br><br><i>— Dami</i></p></div>
+      <div class="carta"><p>Si alguna vez dudaste... sí, te extraño. Incluso cuando sonrío fuerte, te extraño bajito por dentro.<br><br><i>— Dami</i></p></div>
+      <div class="carta"><p>No importa cuánto tiempo pase, lo que escribí no caduca. Son cartas sin timbre, pero con verdad.<br><br><i>— Dami</i></p></div>
+    </div>
+    <div class="botones-cartas">
+      <button id="prevNoEnviada">←</button>
+      <button id="nextNoEnviada">→</button>
+    </div>
+  </div>
+
+  <div class="section visible"><span class="section-num">log / <span class="easter-egg" data-egg="sí, 4am. porque las cosas importantes pasan de madrugada.">madrugada</span></span></div>
+
   <div class="chat-container">
     <div class="message dami">¿Sabés lo que más me llama la atención de ella?</div>
     <div class="time">miércoles, 3:42 a. m.</div>
@@ -111,15 +204,75 @@ Y si estás leyendo esto… es porque vos también sos parte de este crimen.
     <div class="message dix">Eso esperemos....</div>
   </div>
 
-<div class="text">
-  <div class="section">
-    <div class="text" style="text-align: center;">
-     <img src="img/png5.jpeg" alt="Nosotros" 
-       style="position: absolute; top: -57px; left: 200px; width: 180px; pointer-events: none;">
-      </a>
-    </div>
+  <div class="section" style="text-align:center;">
+    <img src="img/png5.jpeg" alt="gatito" style="width:110px; margin:0 auto; border-radius:50%; box-shadow:none; filter:none;">
   </div>
-</div>
-<script src="js/comportamiento.js"></script>
+
+  <div style="text-align:center; padding: 20px 0 60px; opacity:0; animation: fadeUpLink 1s ease 1.2s forwards;">
+    <a href="respuesta.html" style="font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase; color:#8c7b6b; text-decoration:none; border-bottom:1px solid rgba(140,123,107,0.3); padding-bottom:2px;">
+      ¿Querés dejarme algo? →
+    </a>
+  </div>
+
+  <div class="footer">archivo 06 · hecho con demasiado amor y poco sueño · Dami & Dix</div>
+
+  <style>
+    @keyframes fadeUpLink { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+
+  <script src="js/particles.js"></script>
+  <script src="js/comportamiento.js"></script>
+  <script>
+    // Modo noche
+    const nightBtn = document.getElementById('night-toggle');
+    if (localStorage.getItem('archivo06_night') === '1') {
+      document.body.classList.add('night-mode');
+      nightBtn.textContent = '☀';
+    }
+    nightBtn.addEventListener('click', () => {
+      document.body.classList.toggle('night-mode');
+      const isNight = document.body.classList.contains('night-mode');
+      localStorage.setItem('archivo06_night', isNight ? '1' : '0');
+      nightBtn.textContent = isNight ? '☀' : '☽';
+    });
+
+    // Capítulos
+    const trigger = document.getElementById('chapters-trigger');
+    const nav = document.getElementById('chapters-nav');
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      nav.classList.toggle('open');
+      trigger.textContent = nav.classList.contains('open') ? '✕' : '✦';
+    });
+    document.addEventListener('click', () => {
+      nav.classList.remove('open');
+      trigger.textContent = '✦';
+    });
+
+    // Easter eggs
+    const tooltip = document.getElementById('eggTooltip');
+    let hideTO;
+    document.querySelectorAll('.easter-egg').forEach(el => {
+      el.addEventListener('mouseenter', () => { clearTimeout(hideTO); tooltip.textContent = el.dataset.egg; tooltip.classList.add('show'); });
+      el.addEventListener('mousemove', (e) => {
+        let x = e.clientX + 14, y = e.clientY - 10;
+        if (x + 260 > window.innerWidth) x = e.clientX - 260;
+        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+      });
+      el.addEventListener('mouseleave', () => { hideTO = setTimeout(() => tooltip.classList.remove('show'), 200); });
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tooltip.textContent = el.dataset.egg;
+        const r = el.getBoundingClientRect();
+        tooltip.style.left = Math.min(r.left, window.innerWidth - 260) + 'px';
+        tooltip.style.top = (r.bottom + 8) + 'px';
+        tooltip.classList.add('show');
+        clearTimeout(hideTO);
+        hideTO = setTimeout(() => tooltip.classList.remove('show'), 3000);
+      });
+    });
+    document.addEventListener('click', () => tooltip.classList.remove('show'));
+  </script>
+
 </body>
 </html>

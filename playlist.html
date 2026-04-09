@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playlist — Archivo 06</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=DM+Mono:ital,wght@0,300;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0c0a;
+      --ink: #f0ebe3;
+      --accent: #c4704a;
+      --gold: #b8956a;
+      --soft: rgba(240, 235, 227, 0.4);
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+
+    /* Ambient glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(196, 112, 74, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 70px 20px 10px;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.2s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--soft);
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 2.2rem;
+      font-weight: 400;
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--soft);
+      font-style: italic;
+      margin-bottom: 0;
+    }
+
+    /* Track list */
+    .tracklist {
+      max-width: 680px;
+      margin: 50px auto 100px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .track {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.25s ease;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translateX(-12px);
+      animation: slideIn 0.5s ease forwards;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .track:nth-child(1) { animation-delay: 0.1s; }
+    .track:nth-child(2) { animation-delay: 0.2s; }
+    .track:nth-child(3) { animation-delay: 0.3s; }
+    .track:nth-child(4) { animation-delay: 0.4s; }
+    .track:nth-child(5) { animation-delay: 0.5s; }
+    .track:nth-child(6) { animation-delay: 0.6s; }
+    .track:nth-child(7) { animation-delay: 0.7s; }
+    .track:nth-child(8) { animation-delay: 0.8s; }
+
+    .track:hover {
+      background: var(--card);
+    }
+
+    .track:hover .track-num { display: none; }
+    .track .track-play { display: none; }
+    .track:hover .track-play { display: block; }
+
+    .track-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--soft);
+      text-align: center;
+    }
+
+    .track-play {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--ink);
+    }
+
+    .track-info {}
+
+    .track-name {
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .track-artist {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      color: var(--soft);
+    }
+
+    .track-reason {
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--soft);
+      max-width: 180px;
+      text-align: right;
+      line-height: 1.4;
+    }
+
+    .track-duration {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(240, 235, 227, 0.2);
+    }
+
+    /* Featured / local track */
+    .track-featured {
+      grid-column: 1 / -1;
+      background: rgba(196, 112, 74, 0.06);
+      border: 1px solid rgba(196, 112, 74, 0.15);
+      border-radius: 6px;
+      padding: 20px;
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .track-featured-icon {
+      font-size: 2rem;
+      opacity: 0.7;
+    }
+
+    .track-featured-info {}
+
+    .track-featured-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.8;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .track-featured-name {
+      font-size: 1.1rem;
+      color: var(--ink);
+      display: block;
+    }
+
+    .track-featured-artist {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--soft);
+    }
+
+    /* Spotify badge */
+    .spotify-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #1DB954;
+      opacity: 0.7;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .spotify-link:hover { opacity: 1; }
+
+    .section-divider {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--soft);
+      padding: 24px 0 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    /* Back */
+    .back-link {
+      position: fixed; top: 24px; left: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      z-index: 10;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    .chapter-label {
+      position: fixed; top: 24px; right: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      opacity: 0.35;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="next.html" class="back-link">← volver</a>
+  <span class="chapter-label">capítulo / playlist</span>
+
+  <header>
+    <span class="page-label">archivo 06 / música</span>
+    <h1>Las canciones que me recuerdan a vos</h1>
+    <p class="subtitle">cada una tiene un momento</p>
+  </header>
+
+  <div class="tracklist">
+
+    <div class="section-divider">incluida en el sitio</div>
+
+    <!-- Tracks -->
+    <div class="track-featured">
+      <div class="track-featured-icon">♪</div>
+      <div class="track-featured-info">
+        <span class="track-featured-label">Ya de fondo</span>
+        <span class="track-featured-name">A mi lado</span>
+        <span class="track-featured-artist">Ramma</span>
+      </div>
+    </div>
+
+    <div class="section-divider">en YouTube Music</div>
+
+    <a class="track" href="https://music.youtube.com/watch?v=K0mly9lq8JE&list=RDAMVMK0mly9lq8JE" target="_blank" rel="noopener">
+      <span class="track-num">01</span>
+      <span class="track-play">▶</span>
+      <div class="track-info">
+        <span class="track-name">todalanoche</span>
+        <span class="track-artist">Ramma</span>
+      </div>
+      <span class="track-reason">me hace pensar en vos una banda</span>
+    </a>
+
+    <a class="track" href="https://music.youtube.com/watch?v=hdccpNP_57c" target="_blank" rel="noopener">
+      <span class="track-num">02</span>
+      <span class="track-play">▶</span>
+      <div class="track-info">
+        <span class="track-name">THE DRIVER</span>
+        <span class="track-artist">Måneskin</span>
+      </div>
+      <span class="track-reason">literalmente infaltable</span>
+    </a>
+
+    <a class="track" href="https://music.youtube.com/watch?v=KIXkpSQlFF4" target="_blank" rel="noopener">
+      <span class="track-num">03</span>
+      <span class="track-play">▶</span>
+      <div class="track-info">
+        <span class="track-name">forwards beckon rebound</span>
+        <span class="track-artist">Adrianne Lenker</span>
+      </div>
+      <span class="track-reason">Como olvidar la primera</span>
+    </a>
+
+    <a class="track" href="https://music.youtube.com/watch?v=0D28qd--kRE" target="_blank" rel="noopener">
+      <span class="track-num">04</span>
+      <span class="track-play">▶</span>
+      <div class="track-info">
+        <span class="track-name">Euphoria</span>
+        <span class="track-artist">BTS</span>
+      </div>
+      <span class="track-reason">Me re gustó</span>
+    </a>
+
+    <a class="track" href="" target="_blank" rel="noopener">
+      <span class="track-num">05</span>
+      <span class="track-play">▶</span>
+      <div class="track-info">
+        <span class="track-name">canción pendiente</span>
+        <span class="track-artist">artista</span>
+      </div>
+      <span class="track-reason">Proximamente la voy a agregar, pero quería dejar el espacio acá ya</span>
+      </span>
+    </a>
+
+    <a class="track" href="" target="_blank" rel="noopener">
+      <span class="track-num">06</span>
+      <span class="track-play">▶</span>
+      <div class="track-info">
+        <span class="track-name">canción pendiente</span>
+        <span class="track-artist">artista</span>
+      </div>
+      <span class="track-reason">Proximamente la voy a agregar, pero quería dejar el espacio acá ya</span>
+    </a>
+
+    <a class="track" href="" target="_blank" rel="noopener">
+      <span class="track-num">07</span>
+      <span class="track-play">▶</span>
+      <div class="track-info">
+        <span class="track-name">canción pendiente</span>
+        <span class="track-artist">artista</span>
+      </div>
+      <span class="track-reason">Proximamente la voy a agregar, pero quería dejar el espacio acá ya</span>
+    </a>
+
+  </div>
+
+</body>
+</html>
